@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+mt_env/
+*.egg-info/
+
+# Logs / SLURM output
+logs/
+*.out
+*.err
+
+# Data / model outputs
+baseline/output/
+*.jsonl
+*.pt
+*.ckpt
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
