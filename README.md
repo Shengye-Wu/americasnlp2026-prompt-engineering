@@ -48,7 +48,7 @@ python baseline/captioning/run_qwen_prompt_experiment.py \
 Or submit a full pipeline job:
 
 ```bash
-sbatch slurm/Qwen3-VL-8B-Instruct/run_qwen8b_wixarika.sbatch
+sbatch slurm/Qwen3-VL-8B-Instruct/run_qwen8b_p0_short_medium_long_p1_p2_p3_p4_wixarika.sbatch
 ```
 
 (Fill in the `<LRZ_PROJECT_ID>` / `<LRZ_ACCOUNT>` placeholders for your own cluster account first.)
