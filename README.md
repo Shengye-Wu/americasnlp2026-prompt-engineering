@@ -60,7 +60,7 @@ Requires the official repo cloned alongside this one for data + baseline MT/eval
 - **p0-long-literal** is the most robust cross-language baseline; **p1-culture-aware** can beat it, especially at larger scale.
 - Model scale helps culture-aware prompts more than literal ones; few-shot prompting generally hurts.
 - The Spanish pivot is essential — direct target-language generation scores 2–3x lower.
-- The downstream translator is the main bottleneck: swapping NLLB for retrieval-augmented Gemini 3 lifts scores on every language, reaching **22 ChrF++ on Wixárika** (dev set).
+- The downstream translation stage can substantially affect final quality: Gemini 3 + BM25 retrieval outperforms the NLLB baseline across all four evaluated languages, while a separate in-domain Wixárika configuration with 20 translation exemplars achieves **21.53 ChrF++**.
 
 Full tables/analysis are in the paper.
 
