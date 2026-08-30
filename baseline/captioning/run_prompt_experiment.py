@@ -1,3 +1,8 @@
+# Modified from the AmericasNLP 2026 organizers' baseline/caption_generation.py
+# (https://github.com/AmericasNLP/americasnlp2026), which carries no stated
+# license of its own -- see the "License" section of the repo README for
+# details before redistributing this file.
+
 import argparse
 import os
 import re

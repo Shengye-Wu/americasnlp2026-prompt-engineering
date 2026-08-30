@@ -1,6 +1,6 @@
 # Prompt Engineering for Cultural Image Captioning in Indigenous Languages of the Americas
 
-Experiment code for our TUM Master's practical course project based on the AmericasNLP 2026 Shared Task on **Cultural Image Captioning**. We run a controlled prompt-engineering study — eight prompting strategies × four VLMs (2B–32B) — for a *Spanish-pivot* captioning pipeline covering four Indigenous languages: **Wixárika, Bribri, Guaraní, and Orizaba Nahuatl**.
+Experiment code for our TUM Master's practical course project based on the AmericasNLP 2026 Shared Task on **Cultural Image Captioning**. We study eight main prompt configurations across four Indigenous languages — **Wixárika, Bribri, Guaraní, and Orizaba Nahuatl** — for a *Spanish-pivot* captioning pipeline, primarily using Qwen3-VL at 2B, 8B, and 32B scales, with LLaVA-OneVision-7B and larger/API-hosted models used in additional ablations.
 
 Builds on the official shared-task repo (datasets, baseline VLM+MT pipeline, eval scripts): https://github.com/AmericasNLP/americasnlp2026
 
@@ -34,6 +34,8 @@ Each SLURM job loops over prompt strategies, calling a captioning driver, then t
 
 `p0_short/medium/long_literal` (literal baseline) · `p1_culture_aware` · `p2_translation_friendly` / `p2b_..._detailed` · `p3_object_action` · `p4_direct_target` (no pivot, control)
 
+Additional experiment: `p5_few_shot` using 5 or 20 multimodal Wixárika pilot examples.
+
 ## Usage
 
 ```bash
@@ -51,15 +53,84 @@ Or submit a full pipeline job:
 sbatch slurm/Qwen3-VL-8B-Instruct/run_qwen8b_p0_short_medium_long_p1_p2_p3_p4_wixarika.sbatch
 ```
 
-(Fill in the `<LRZ_PROJECT_ID>` / `<LRZ_ACCOUNT>` placeholders for your own cluster account first.)
+## Installation and setup
 
-Requires the official repo cloned alongside this one for data + baseline MT/eval, plus a base env (`transformers`, `torch`, `pandas`, `pillow`, `tqdm`) and a separate `mt_env` for translation/eval.
+This repository extends the official [AmericasNLP 2026 repository](https://github.com/AmericasNLP/americasnlp2026) and is not intended to be run as a completely standalone project.
+
+### 1. Set up the official AmericasNLP 2026 baseline
+
+First, clone the official repository and follow its installation instructions:
+
+```bash
+git clone https://github.com/AmericasNLP/americasnlp2026.git
+cd americasnlp2026
+```
+
+Before running our experiments, make sure that the official baseline pipeline works correctly, in particular the Sheffield NLLB-based translation component. Our main experiments reuse the baseline data layout, translation code, and evaluation pipeline provided by the official repository.
+
+### 2. Add the experiment scripts from this repository
+
+Clone this repository separately:
+
+```bash
+git clone https://github.com/Shengye-Wu/americasnlp2026-prompt-engineering.git
+```
+
+The experiment files should then be copied into the official `americasnlp2026` repository:
+
+- Copy the contents of `americasnlp2026-prompt-engineering/baseline/` into `americasnlp2026/baseline/`.
+- Copy `americasnlp2026-prompt-engineering/slurm/` into the root of `americasnlp2026/`.
+
+Afterwards, the relevant directory structure should look approximately like:
+
+```
+americasnlp2026/
+├── baseline/
+│   ├── americasnlp-2023-sheffield/    # official NLLB translation component
+│   ├── captioning/                     # Qwen3-VL captioning experiments
+│   ├── downstream/                     # Gemini downstream translation experiments
+│   └── modal/                          # Modal/OpenRouter experiments
+├── data/
+├── slurm/
+│   ├── Qwen3-VL-2B-Instruct/
+│   ├── Qwen3-VL-8B-Instruct/
+│   ├── Qwen3-VL-32B-Instruct/
+│   └── Qwen2B_COMET/
+└── ...
+```
+
+Run the experiment commands from the root of the official `americasnlp2026` repository.
+
+For SLURM experiments, create the log directory if necessary:
+
+```bash
+mkdir -p logs
+```
+
+Cluster-specific placeholders such as `<LRZ_PROJECT_ID>` and `<LRZ_ACCOUNT>` in the SLURM scripts must be replaced with the corresponding values for your own computing environment.
+
+### 3. Install the Python environments
+
+- **Base env** (captioning, downstream ablations, Modal orchestration): `pip install -r requirements.txt` (from this repo).
+- **`mt_env`** (translation + evaluation): a separate environment for the official repo's `translate.py`/`eval.py` — install its own `requirements.txt`, plus `unbabel-comet` if you're also running the `Qwen2B_COMET` slurm job.
+
+### 4. (Optional) API credentials for the hosted-model ablations
+
+See [API-based experiments](#api-based-experiments) below if you plan to run the OpenRouter/Modal scripts.
+
+## API-based experiments
+
+Some supplementary experiments use hosted models through OpenRouter/Modal and therefore require the corresponding API credentials. API keys are not included in this repository and should be provided through environment variables or the platform's secret-management mechanism.
+
+- `baseline/downstream/gemini_downstream.py`, `gemini_rag_downstream.py`, and the Modal scripts that call OpenRouter (`modal_openrouter.py`, `modal_fewshot.py`) all read the key from the `OPENROUTER_API_KEY` environment variable.
+- For the local downstream scripts, export it directly, e.g. `OPENROUTER_API_KEY=$(cat ~/.openrouter_key) python baseline/downstream/gemini_downstream.py ...`.
+- For the Modal scripts, it's injected via a named Modal secret instead: `modal secret create openrouter-key OPENROUTER_API_KEY=...` (once per account), which also requires `modal setup` to authenticate the Modal CLI itself.
 
 ## Key results
 
 - **p0-long-literal** is the most robust cross-language baseline; **p1-culture-aware** can beat it, especially at larger scale.
 - Model scale helps culture-aware prompts more than literal ones; few-shot prompting generally hurts.
-- The Spanish pivot is essential — direct target-language generation scores 2–3x lower.
+- The Spanish-pivot pipeline substantially outperforms direct target-language generation in our evaluated settings.
 - The downstream translation stage can substantially affect final quality: Gemini 3 + BM25 retrieval outperforms the NLLB baseline across all four evaluated languages, while a separate in-domain Wixárika configuration with 20 translation exemplars achieves **21.53 ChrF++**.
 
 Full tables/analysis are in the paper.
@@ -70,4 +141,4 @@ Shengye Wu, Hamza Ben Yaacoub, Servesh Khandwe — TUM
 
 ## License
 
-Code in this repo is MIT licensed (see `LICENSE`). The shared-task dataset itself is released separately by the organizers under CC BY-NC 4.0.
+Code in this repo is MIT licensed (see `LICENSE`), **except** `baseline/captioning/run_qwen_prompt_experiment.py` and `run_prompt_experiment.py`, which are modified from the AmericasNLP 2026 organizers' `baseline/caption_generation.py`. That upstream file carries no stated license — the official repo's only license statement covers the dataset, not its code — so those two files are carved out of the MIT grant pending clarification/permission from the organizers. The shared-task dataset itself is released separately under CC BY-NC 4.0.

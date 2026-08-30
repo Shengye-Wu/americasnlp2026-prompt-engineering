@@ -1,0 +1,32 @@
+# Base environment for this repo's scripts: VLM captioning
+# (baseline/captioning/), the Gemini downstream-translation ablations
+# (baseline/downstream/), and the Modal orchestration scripts
+# (baseline/modal/, only needs the `modal` client locally -- the rest of
+# their dependencies are installed remotely via .pip_install() in-script).
+#
+# NOT covered here: the official AmericasNLP repo's own MT/eval pipeline
+# (baseline/americasnlp-2023-sheffield/translate.py, baseline/eval.py),
+# which the slurm scripts run in a separate `mt_env` -- install that
+# repo's own requirements.txt for it. The Qwen2B_COMET slurm job also
+# needs `unbabel-comet` (for the `comet-score` CLI) in that same mt_env.
+
+# Captioning (baseline/captioning/)
+# Pinned to match the official baseline environment where they overlap.
+torch==2.11.0
+torchvision==0.26.0
+transformers==5.5.4
+accelerate
+pillow
+pandas==3.0.2
+tqdm==4.67.3
+
+# Gemini downstream-translation ablations (baseline/downstream/)
+requests
+rank_bm25
+# The official baseline runs sacrebleu built from source at a specific
+# commit (2.6.1.dev1+gf615c7286), which isn't installable via pip as-is.
+# Pinned here to the nearest published release instead.
+sacrebleu==2.6.1
+
+# Modal orchestration (baseline/modal/)
+modal

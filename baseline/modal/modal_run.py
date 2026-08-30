@@ -92,7 +92,7 @@ def _generate_captions(language):
     import sys, time, torch, pandas as pd
     from PIL import Image as PILImage
     from transformers import LlavaOnevisionForConditionalGeneration, AutoProcessor
-    sys.path.insert(0, "/root/repo/baseline")
+    sys.path.insert(0, "/root/repo/baseline/captioning")
     from run_prompt_experiment import build_prompt, LANG_INFO, clean_text
 
     info = LANG_INFO[language]
