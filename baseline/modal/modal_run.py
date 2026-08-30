@@ -12,9 +12,9 @@ loads NLLB OOMs a 24 GB A10G. The translate pass loads NLLB only, so it gets the
 whole GPU. Captions persist to the volume, so translate can re-run independently.
 
 Usage (from repo root, after `modal setup`):
-  modal run baseline/modal_run.py --stage translate     # re-score using saved captions
-  modal run baseline/modal_run.py --stage all           # full pipeline from scratch
-  modal run baseline/modal_run.py --stage all --languages wixarika,bribri
+  modal run baseline/modal/modal_run.py --stage translate     # re-score using saved captions
+  modal run baseline/modal/modal_run.py --stage all           # full pipeline from scratch
+  modal run baseline/modal/modal_run.py --stage all --languages wixarika,bribri
   modal volume get americasnlp-out / ./modal_output     # pull outputs locally
 
 Maya (yua_Latn) is not in the MT's langs_extra.txt → only p4_direct_target
@@ -24,7 +24,7 @@ import os
 import json
 import modal
 
-REPO_LOCAL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_LOCAL = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODEL = "llava-hf/llava-onevision-qwen2-7b-si-hf"
 MODEL_TAG = MODEL.split("/")[-1]
 SPLIT = "dev"

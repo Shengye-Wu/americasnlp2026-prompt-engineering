@@ -7,9 +7,9 @@ Pipeline per (model x language):
   ->  NLLB MT (Sheffield submission_3) ->  Wixárika  ->  ChrF++ (50 dev images)
 
 Usage (from repo root, after `modal setup`):
-  modal run baseline/modal_fewshot.py
-  modal run baseline/modal_fewshot.py --models gemini-3-flash --languages wixarika
-  modal run baseline/modal_fewshot.py --shots 10
+  modal run baseline/modal/modal_fewshot.py
+  modal run baseline/modal/modal_fewshot.py --models gemini-3-flash --languages wixarika
+  modal run baseline/modal/modal_fewshot.py --shots 10
   modal volume get americasnlp-out / ./modal_output
 
 Key is a named Modal secret (openrouter-key); never written into this file.
@@ -18,7 +18,7 @@ import os
 import json
 import modal
 
-REPO_LOCAL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_LOCAL = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 N_SHOTS_DEFAULT = 20
 EX_SIDE = 448   # downscale example images (cheaper tokens)
 Q_SIDE = 672    # query image

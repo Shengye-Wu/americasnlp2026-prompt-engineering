@@ -18,15 +18,17 @@ A VLM writes a Spanish caption; a downstream MT model (baseline: Sheffield NLLB;
 
 ```
 .
-├── scripts/
-│   └── run_qwen_prompt_experiment.py   # VLM captioning driver (Qwen3-VL family)
+├── baseline/
+│   ├── captioning/     # VLM → Spanish caption drivers (Qwen3-VL, LLaVA-OneVision)
+│   ├── downstream/     # Gemini-as-translator ablations (few-shot / BM25-retrieval), vs. NLLB
+│   └── modal/          # Modal cloud jobs: few-shot captioning, OpenRouter VLMs, full pipeline
 └── slurm/
     ├── Qwen2B_COMET/                   # COMET eval job (Qwen3-VL-2B, pilot set)
     ├── Qwen3-VL-8B-Instruct/           # 8B prompt-ablation jobs
     └── Qwen3-VL-32B-Instruct/          # 32B prompt-ablation jobs
 ```
 
-Each SLURM job loops over prompt strategies, calling the captioning script, then the baseline's `translate.py`, then `eval.py`.
+Each SLURM job loops over prompt strategies, calling a captioning driver, then the official repo's `translate.py`, then `eval.py`. The `baseline/downstream/` and `baseline/modal/` scripts are standalone ablations (Gemini as downstream translator; cloud-hosted VLMs via Modal) run independently of the SLURM jobs.
 
 ## Prompt strategies (`build_prompt()`)
 
@@ -35,7 +37,7 @@ Each SLURM job loops over prompt strategies, calling the captioning script, then
 ## Usage
 
 ```bash
-python scripts/run_qwen_prompt_experiment.py \
+python baseline/captioning/run_qwen_prompt_experiment.py \
   --model "Qwen/Qwen3-VL-8B-Instruct" \
   --language wixarika --split dev \
   --prompt-mode p0_long_literal \

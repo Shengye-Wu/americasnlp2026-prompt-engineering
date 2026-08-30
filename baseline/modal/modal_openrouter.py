@@ -12,15 +12,15 @@ The OpenRouter key is read locally from ~/.openrouter_key and injected as a Moda
 Secret — it is NEVER written into this file or the repo.
 
 Usage (from repo root, after `modal setup`):
-  modal run baseline/modal_openrouter.py
-  modal run baseline/modal_openrouter.py --models qwen3-vl-235b --languages wixarika
+  modal run baseline/modal/modal_openrouter.py
+  modal run baseline/modal/modal_openrouter.py --models qwen3-vl-235b --languages wixarika
   modal volume get americasnlp-out / ./modal_output
 """
 import os
 import json
 import modal
 
-REPO_LOCAL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_LOCAL = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MAX_SIDE = 672
 PROMPT_MODE = "p0_long_literal"
 PROMPT_TEXT = """Describe this image in Spanish using one or two literal sentences.

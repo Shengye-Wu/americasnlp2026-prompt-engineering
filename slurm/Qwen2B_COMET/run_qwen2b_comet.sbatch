@@ -72,7 +72,7 @@ for EXP_PROMPT in "${PROMPT_LIST[@]}"; do
 
   # 1. Run LLM Image Captioning (Generates Spanish)
   echo "[1/3] Running Captioning..."
-  python scripts/run_qwen_prompt_experiment.py \
+  python baseline/captioning/run_qwen_prompt_experiment.py \
     --model "$MODEL32" \
     --language "$EXP_LANG" \
     --split "$EXP_SPLIT" \

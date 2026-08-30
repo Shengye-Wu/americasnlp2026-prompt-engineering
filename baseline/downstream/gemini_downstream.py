@@ -10,7 +10,7 @@ translated by NLLB, so the only thing that changes is the downstream
 translator.
 
 Usage:
-  OPENROUTER_API_KEY=$(cat ~/.openrouter_key) python baseline/gemini_downstream.py
+  OPENROUTER_API_KEY=$(cat ~/.openrouter_key) python baseline/downstream/gemini_downstream.py
   ... --model google/gemini-3-flash-preview --languages wixarika,bribri
 """
 import os, sys, json, time, argparse

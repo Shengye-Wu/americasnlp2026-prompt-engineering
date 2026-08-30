@@ -10,7 +10,7 @@ Compares against the fixed NLLB translator on the SAME Spanish input.
 
 Usage:
   OPENROUTER_API_KEY=$(cat ~/.openrouter_key) \
-    python baseline/gemini_rag_downstream.py --k 20 --model google/gemini-3-flash-preview
+    python baseline/downstream/gemini_rag_downstream.py --k 20 --model google/gemini-3-flash-preview
 """
 import os, re, json, time, argparse
 import requests

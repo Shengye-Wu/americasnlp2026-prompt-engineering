@@ -43,7 +43,7 @@ echo "Starting Automated Pipeline | Experiment Prefix: $OUT_PREFIX"
 echo "=========================================="
 
 # 1. Run LLM Image Captioning
-python scripts/run_qwen_prompt_experiment.py \
+python baseline/captioning/run_qwen_prompt_experiment.py \
   --model "$MODEL32" \
   --language "$EXP_LANG" \
   --split "$EXP_SPLIT" \
