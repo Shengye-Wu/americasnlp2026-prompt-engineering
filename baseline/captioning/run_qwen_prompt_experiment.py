@@ -172,73 +172,6 @@ Do not explain.
 Output only the {language_name} caption.
 """.strip()
 
-    if prompt_mode == "p5_visual_dictionary":
-        # load different dictionaries for different languages
-        visual_dict = ""
-        if language_name == "Wixárika":
-            visual_dict = """
-    SUPPORTING VISUAL DICTIONARY (Use these terms only if their physical characteristics match exactly what you see):
-
-    1. Nature & Environment:
-    - Peyote (hikuri): Small, rounded, green, spineless cactus, divided into ribs, sometimes with small white tufts.
-    - Wirikuta: Arid landscape with sand, dry bushes, and cacti.
-    - Cerro Quemado: Rocky mountain peak, often with concentric circles of stones on the ground.
-
-    2. Art & Objects:
-    - Yarn painting (Nierika): Wooden board completely covered with thick, brightly colored contrasting yarn, forming dense geometric figures or animals.
-    - Bead art (Chaquira): 3D objects (masks, bowls, figures) completely covered by thousands of tiny multicolored glass beads.
-    - Ojo de Dios (tsik+ri): Wooden cross woven with yarn forming a pattern of concentric colored diamonds.
-    - Jícara: Hemispherical bowl (often made from a gourd), decorated or plain.
-
-    3. Traditional Clothing & Accessories:
-    - Kamirra/kutuni: Loose, long white cotton shirt, featuring dense cross-stitch embroidery at the bottom, cuffs, and chest.
-    - Rupurero: Woven palm leaf hat with a wide flat brim, adorned with colorful yarn tassels/pom-poms hanging from the edge.
-    - Kuchuri: Small white woven shoulder bag with strong geometric embroidery and woven straps.
-    - Juayame: Wide woven fabric belt tied at the waist with complex geometric designs.
-    """
-        # (elif language_name == "Bribri":)
-
-        return f"""
-    You are an expert image captioning system. Your task is to describe this image in Spanish using one or two literal sentences.
-
-    Culture Context: {culture}
-    Final Target Language: {language_name}
-
-    STRICT RULES:
-    - Describe ONLY what is physically and directly visible in the image.
-    - Include key visual details: people, shapes, colors, objects, animals, actions, textures, clothing, and background.
-    - DO NOT add cultural, mystical, or religious interpretations.
-    - DO NOT mention deities, rituals, symbolism, or history.
-    - Maximum 45 words.
-    - Output ONLY the Spanish caption.
-    {visual_dict}
-    """.strip()
-
-    if prompt_mode == "p6_few_shot":
-        return f"""
-You are an expert image captioning system. Your task is to describe this image in Spanish using one or two literal sentences.
-
-Culture Context: {culture}
-Final Target Language: {language_name}
-
-STRICT RULES:
-- Describe ONLY what is physically and directly visible in the image.
-- DO NOT add cultural, mystical, or religious interpretations.
-- DO NOT mention deities, rituals, symbolism, or history.
-- Maximum 45 words.
-
-Here are 5 perfect examples of how to describe images in this context (Learn the style and length):
-
-Ejemplo 1: "Los puentes colgantes estan en lugares de difícil acceso como cuando crecen los ríos y no haya riesgos en las comunidades pequeñas."
-Ejemplo 2: "Toros de reparo descansando antes de que comience el jaripeo.."
-Ejemplo 3: "Joven wixarika discapacitado con traje típico y el sombrero de palma y con un color único en su bolsa bordado disfrutando el paisaje de un pueblo pintoresco lleno de tradición y cultura."
-Ejemplo 4: "Una cuadrilla de wixáritari reunidos en la mañana antes de entrar a trabajar al corte de las papayas."
-Ejemplo 5: "Madre wixarika llevando a su hija a la escuela pasando por el puente colgante por la crecida de río."
-
-Now, generate the Spanish caption for the provided image following exactly this literal style.
-Output ONLY the Spanish caption.
-""".strip()
-
     raise ValueError(f"Unknown prompt mode: {prompt_mode}")
 
 
@@ -282,8 +215,6 @@ def main():
             "p2b_translation_friendly_detailed",
             "p3_object_action",
             "p4_direct_target",
-            "p5_visual_dictionary",
-            "p6_few_shot",
         ],
     )
     parser.add_argument("--max-samples", type=int, default=10)

@@ -56,4 +56,4 @@ PROMPT_LIST=(
 )
 ```
 
-List one or more prompt-mode identifiers here; the script loops over each one, running the full pipeline per entry and printing a summary of all scores at the end. Available modes (see `build_prompt()` in `baseline/captioning/`): `p0_short_literal`, `p0_medium_literal`, `p0_long_literal`, `p1_culture_aware`, `p2_translation_friendly`, `p2b_translation_friendly_detailed`, `p3_object_action`, `p4_direct_target`, `p5_visual_dictionary`, `p6_few_shot`.
+List one or more prompt-mode identifiers here; the script loops over each one, running the full pipeline per entry and printing a summary of all scores at the end. Available modes (see `build_prompt()` in `baseline/captioning/`): `p0_short_literal`, `p0_medium_literal`, `p0_long_literal`, `p1_culture_aware`, `p2_translation_friendly`, `p2b_translation_friendly_detailed`, `p3_object_action`, `p4_direct_target`.

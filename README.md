@@ -32,7 +32,7 @@ Each SLURM job loops over prompt strategies, calling a captioning driver, then t
 
 ## Prompt strategies (`build_prompt()`)
 
-`p0_short/medium/long_literal` (literal baseline) · `p1_culture_aware` · `p2_translation_friendly` / `p2b_..._detailed` · `p3_object_action` · `p4_direct_target` (no pivot, control) · `p5_visual_dictionary`, `p6_few_shot` (extra experimental modes)
+`p0_short/medium/long_literal` (literal baseline) · `p1_culture_aware` · `p2_translation_friendly` / `p2b_..._detailed` · `p3_object_action` · `p4_direct_target` (no pivot, control)
 
 ## Usage
 
