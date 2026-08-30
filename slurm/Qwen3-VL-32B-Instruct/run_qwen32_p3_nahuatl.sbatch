@@ -43,7 +43,7 @@ SECONDS=0
 
 echo "=========================================="
 echo "Starting Automated Pipeline | Experiment Prefix: $OUT_PREFIX"
-echo "馃 Prompt Strategy : $EXP_PROMPT"
+echo "Prompt Strategy : $EXP_PROMPT"
 echo "Output Prefix   : $OUT_PREFIX"
 echo "Start Time      : $START_TIME"
 echo "=========================================="
