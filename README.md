@@ -1,6 +1,6 @@
 # Prompt Engineering for Cultural Image Captioning in Indigenous Languages of the Americas
 
-Experiment code for our AmericasNLP 2026 Shared Task submission on **Cultural Image Captioning**. We run a controlled prompt-engineering study — eight prompting strategies × four VLMs (2B–32B) — for a *Spanish-pivot* captioning pipeline covering four Indigenous languages: **Wixárika, Bribri, Guaraní, and Orizaba Nahuatl**.
+Experiment code for our TUM Master's practical course project based on the AmericasNLP 2026 Shared Task on **Cultural Image Captioning**. We run a controlled prompt-engineering study — eight prompting strategies × four VLMs (2B–32B) — for a *Spanish-pivot* captioning pipeline covering four Indigenous languages: **Wixárika, Bribri, Guaraní, and Orizaba Nahuatl**.
 
 Builds on the official shared-task repo (datasets, baseline VLM+MT pipeline, eval scripts): https://github.com/AmericasNLP/americasnlp2026
 
