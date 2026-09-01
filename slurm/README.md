@@ -4,17 +4,22 @@ Batch scripts for running the caption → translate → evaluate pipeline on the
 
 ## Why are there so many scripts?
 
-The full experiment grid — prompt strategies × languages × model sizes — takes too long to run as a single SLURM job: each prompt mode over 50 dev images can take a couple of hours per language, and the cluster partitions cap job walltime (`#SBATCH --time=...`, e.g. 18h for the 8B jobs, 12h for the 32B jobs). So instead of one script that loops over everything, each script covers a slice of the grid — one or more prompt modes for one language. This keeps individual jobs inside the time limit and lets a failed or timed-out slice be resubmitted on its own instead of rerunning the whole matrix.
+The full experiment grid — prompt strategies × languages × model sizes — takes too long to run as a single SLURM job: each prompt mode over 50 dev images can take a couple of hours per language, and the cluster partitions cap job walltime (`#SBATCH --time=...`, e.g. 18h for the 8B jobs, 12h for the 32B jobs). So instead of one script that loops over everything, each 8B/32B script covers a slice of the grid — one or more prompt modes for one language. This keeps individual jobs inside the time limit and lets a failed or timed-out slice be resubmitted on its own instead of rerunning the whole matrix.
+
+The 2B model is the exception: it runs fast enough that `Qwen3-VL-2B-Instruct/` holds plain `bash` driver scripts that sweep the entire grid in one process, rather than sliced `.sbatch` jobs.
 
 ## Directory layout
 
+- `Qwen3-VL-2B-Instruct/` — 2B model, plain `bash` scripts (run with `bash <script>.sh` from the official repo root, not `sbatch`). Each sweeps all four languages in one run:
+  - `run_qwen2b_all_langs.sh` — single prompt mode (`p0_long_literal`) over the four languages, writing one summary CSV.
+  - `run_qwen2b_full_poster_tests.sh` — every prompt mode (`p0_simple`, `p0_short/medium/long_literal`, `p1_culture_aware`, `p2_translation_friendly`, `p2b_translation_friendly_detailed`, `p3_object_action`, `p4_direct_target`) × the four languages, then builds poster-ready CSV summaries and a `tar.gz` archive of all outputs. `p4_direct_target` is scored directly; the rest go through the Spanish → Sheffield MT pivot.
 - `Qwen3-VL-8B-Instruct/` — 8B model. Filenames encode every prompt mode the script runs: `run_qwen8b_<prompt modes>_<language>.sbatch` (e.g. `run_qwen8b_p1_p2_wixarika.sbatch` runs `p1_culture_aware` then `p2_translation_friendly`).
 - `Qwen3-VL-32B-Instruct/` — 32B model, one prompt mode per language: `run_qwen32_<prompt mode>_<language>.sbatch`.
 - `Qwen2B_COMET/` — a single job that runs the 2B model over the *pilot* set and scores the generated Spanish captions with COMET (a sanity check on captioning quality alone, not part of the main Spanish→target pipeline).
 
 ## Editing a script
 
-Every script follows the same structure: a block of static variables, a `PROMPT_LIST` array, then a loop that runs captioning → translation → evaluation for each entry in the list.
+Every `.sbatch` script follows the same structure: a block of static variables, a `PROMPT_LIST` array, then a loop that runs captioning → translation → evaluation for each entry in the list. (The 2B `bash` scripts under `Qwen3-VL-2B-Instruct/` are shaped the same way but wrap the loop in a per-language loop as well, and the poster script appends CSV post-processing.)
 
 ### Switching the model
 
@@ -56,7 +61,7 @@ PROMPT_LIST=(
 )
 ```
 
-List one or more prompt-mode identifiers here; the script loops over each one, running the full pipeline per entry and printing a summary of all scores at the end. Available modes (see `build_prompt()` in `baseline/captioning/`): `p0_short_literal`, `p0_medium_literal`, `p0_long_literal`, `p1_culture_aware`, `p2_translation_friendly`, `p2b_translation_friendly_detailed`, `p3_object_action`, `p4_direct_target`.
+List one or more prompt-mode identifiers here; the script loops over each one, running the full pipeline per entry and printing a summary of all scores at the end. Available modes (see `build_prompt()` in `baseline/captioning/`): `p0_simple`, `p0_short_literal`, `p0_medium_literal`, `p0_long_literal`, `p1_culture_aware`, `p2_translation_friendly`, `p2b_translation_friendly_detailed`, `p3_object_action`, `p4_direct_target`.
 
 ## COMET experiments
 

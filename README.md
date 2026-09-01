@@ -23,16 +23,17 @@ A VLM writes a Spanish caption; a downstream MT model (baseline: Sheffield NLLB;
 │   ├── downstream/     # Gemini-as-translator ablations (few-shot / BM25-retrieval), vs. NLLB
 │   └── modal/          # Modal cloud jobs: few-shot captioning, OpenRouter VLMs, full pipeline
 └── slurm/
+    ├── Qwen3-VL-2B-Instruct/           # 2B full-grid sweep scripts (plain bash, all languages)
     ├── Qwen2B_COMET/                   # COMET eval job (Qwen3-VL-2B, pilot set)
     ├── Qwen3-VL-8B-Instruct/           # 8B prompt-ablation jobs
     └── Qwen3-VL-32B-Instruct/          # 32B prompt-ablation jobs
 ```
 
-Each SLURM job loops over prompt strategies, calling a captioning driver, then the official repo's `translate.py`, then `eval.py`. The `baseline/downstream/` and `baseline/modal/` scripts are standalone ablations (Gemini as downstream translator; cloud-hosted VLMs via Modal) run independently of the SLURM jobs.
+Each SLURM job loops over prompt strategies, calling a captioning driver, then the official repo's `translate.py`, then `eval.py`. The 8B and 32B jobs are `.sbatch` files sliced by language/prompt to stay inside cluster walltime limits; the `Qwen3-VL-2B-Instruct/` scripts are plain `bash` drivers that sweep the whole grid (all four languages, all prompt modes) in one run, since the 2B model is fast enough not to need slicing. The `baseline/downstream/` and `baseline/modal/` scripts are standalone ablations (Gemini as downstream translator; cloud-hosted VLMs via Modal) run independently of the SLURM jobs.
 
 ## Prompt strategies (`build_prompt()`)
 
-`p0_short/medium/long_literal` (literal baseline) · `p1_culture_aware` · `p2_translation_friendly` / `p2b_..._detailed` · `p3_object_action` · `p4_direct_target` (no pivot, control)
+`p0_simple` · `p0_short/medium/long_literal` (literal baseline) · `p1_culture_aware` · `p2_translation_friendly` / `p2b_..._detailed` · `p3_object_action` · `p4_direct_target` (no pivot, control)
 
 Additional experiment: `p5_few_shot` using 5 or 20 multimodal Wixárika pilot examples.
 
@@ -51,6 +52,13 @@ Or submit a full pipeline job:
 
 ```bash
 sbatch slurm/Qwen3-VL-8B-Instruct/run_qwen8b_p0_short_medium_long_p1_p2_p3_p4_wixarika.sbatch
+```
+
+Or run the 2B grid sweep directly (from the official repo root):
+
+```bash
+bash slurm/Qwen3-VL-2B-Instruct/run_qwen2b_all_langs.sh          # p0_long_literal, all 4 languages
+bash slurm/Qwen3-VL-2B-Instruct/run_qwen2b_full_poster_tests.sh  # every prompt mode × all 4 languages, + poster CSV summaries
 ```
 
 ## Installation and setup
