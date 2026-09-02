@@ -29,13 +29,21 @@ A VLM writes a Spanish caption; a downstream MT model (baseline: Sheffield NLLB;
     └── Qwen3-VL-32B-Instruct/          # 32B prompt-ablation jobs
 ```
 
-Each SLURM job loops over prompt strategies, calling a captioning driver, then the official repo's `translate.py`, then `eval.py`. The 8B and 32B jobs are `.sbatch` files sliced by language/prompt to stay inside cluster walltime limits; the `Qwen3-VL-2B-Instruct/` scripts are plain `bash` drivers that sweep the whole grid (all four languages, all prompt modes) in one run, since the 2B model is fast enough not to need slicing. The `baseline/downstream/` and `baseline/modal/` scripts are standalone ablations (Gemini as downstream translator; cloud-hosted VLMs via Modal) run independently of the SLURM jobs.
+The experiment scripts run one or more prompt configurations, calling a captioning driver followed by the official repository's translation and evaluation components. The 8B and 32B experiments use `.sbatch` files split by language and prompt configuration to stay within cluster walltime limits. The `Qwen3-VL-2B-Instruct/` scripts are plain `bash` drivers that sweep multiple languages and prompt modes in a single run. The `baseline/downstream/` and `baseline/modal/` scripts implement additional downstream and hosted-model ablations independently of these cluster jobs.
 
-## Prompt strategies (`build_prompt()`)
+## Prompt strategies
 
-`p0_simple` · `p0_short/medium/long_literal` (literal baseline) · `p1_culture_aware` · `p2_translation_friendly` / `p2b_..._detailed` · `p3_object_action` · `p4_direct_target` (no pivot, control)
+The eight main configurations reported in the paper are:
 
-Additional experiment: `p5_few_shot` using 5 or 20 multimodal Wixárika pilot examples.
+`p0_short/medium/long_literal` · `p1_culture_aware` ·
+`p2_translation_friendly` · `p2b_translation_friendly_detailed` ·
+`p3_object_action` · `p4_direct_target`
+
+`p0_simple` is retained in the captioning driver as an additional simple
+baseline but is not part of the eight main configurations reported in the paper.
+
+The separate `p5_few_shot` experiment uses 5 or 20 multimodal Wixárika pilot
+examples and is implemented in `baseline/modal/modal_fewshot.py`.
 
 ## Usage
 
@@ -67,10 +75,12 @@ This repository extends the official [AmericasNLP 2026 repository](https://githu
 
 ### 1. Set up the official AmericasNLP 2026 baseline
 
-First, clone the official repository and follow its installation instructions:
+First, clone both the official repository and this repository side by side, then follow the official installation instructions:
 
 ```bash
 git clone https://github.com/AmericasNLP/americasnlp2026.git
+git clone https://github.com/Shengye-Wu/americasnlp2026-prompt-engineering.git
+
 cd americasnlp2026
 ```
 
@@ -78,13 +88,7 @@ Before running our experiments, make sure that the official baseline pipeline wo
 
 ### 2. Add the experiment scripts from this repository
 
-Clone this repository separately:
-
-```bash
-git clone https://github.com/Shengye-Wu/americasnlp2026-prompt-engineering.git
-```
-
-The experiment files should then be copied into the official `americasnlp2026` repository:
+With both repositories cloned side by side (see step 1), copy the experiment files into the official `americasnlp2026` repository:
 
 - Copy the contents of `americasnlp2026-prompt-engineering/baseline/` into `americasnlp2026/baseline/`.
 - Copy `americasnlp2026-prompt-engineering/slurm/` into the root of `americasnlp2026/`.
